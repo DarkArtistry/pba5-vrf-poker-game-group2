@@ -22,6 +22,9 @@ impl Player {
     }
 
     fn draw_card(&mut self, input: &[u8]) {
+        // References https://docs.rs/schnorrkel/latest/schnorrkel/keys/struct.Keypair.html#method.vrf_sign
+        // The VRF generates an output that is deterministic from the input and the private key, but appears random and is not reversible.
+        // The VRF output and a proof that can be used to verify the correctness of the VRF output without revealing the private key.
         let (inout, proof, _) = self.keypair.vrf_sign(signing_context(CONTEXT).bytes(input));
         self.vrf_output = Some(inout);
         self.vrf_proof = Some(proof);
