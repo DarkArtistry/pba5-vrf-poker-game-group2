@@ -55,33 +55,38 @@ fn main() {
     players.insert("Alice", Player::new());
     players.insert("Bob", Player::new());
 
-    // Commit-reveal phase
-    let commit_input = b"poker_game";
 
-    // Players draw their cards
-    for player in players.values_mut() {
-        player.draw_card(commit_input);
-    }
-
-    // Reveal phase
-    for (name, player) in &players {
-        if let Some(card) = player.reveal_card() {
-            println!("{}'s card: {}", name, card);
-        } else {
-            println!("{} has not drawn a card.", name);
+    for round in 1..=10 {
+        println!("Round {}", round);
+    
+        // Commit-reveal phase
+        let commit_string = format!("poker_game{}", round);
+        let commit_input = commit_string.as_bytes();
+    
+        // Players draw their cards
+        for player in players.values_mut() {
+            player.draw_card(commit_input);
         }
-    }
+    
+        // Reveal phase
+        for (name, player) in &players {
+            if let Some(card) = player.reveal_card() {
+                println!("{}'s card: {}", name, card);
+            } else {
+                println!("{} has not drawn a card.", name);
+            }
+        }
+    
+        // Verify the cards
+        for (name, player) in &players {
+            let is_valid = player.verify_card(commit_input);
+            println!("{}'s card is valid: {}", name, is_valid);
+        }
 
-    // Verify the cards
-    for (name, player) in &players {
-        let is_valid = player.verify_card(commit_input);
-        println!("{}'s card is valid: {}", name, is_valid);
-    }
-
-    // Determine the winner
-    let winner = players.iter().max_by_key(|&(_, player)| player.reveal_card().unwrap_or(0));
-    if let Some((name, _)) = winner {
-        println!("{} wins!", name);
+        let winner = players.iter().max_by_key(|&(_, player)| player.reveal_card().unwrap_or(0));
+        if let Some((name, _)) = winner {
+            println!("{} wins!", name);
+        }
     }
 }
 
