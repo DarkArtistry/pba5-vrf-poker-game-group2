@@ -1,0 +1,9 @@
+[package]
+name = "pba5-vrf-poker-game-group2"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+schnorrkel = "0.11.4"
+rand = "0.8.4"
+hex = "0.4.3"
