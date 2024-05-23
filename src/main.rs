@@ -1,5 +1,5 @@
 use schnorrkel::{Keypair, MiniSecretKey, PublicKey, Signature, signing_context, vrf::{VRFInOut, VRFProof}};
-use rand::rngs::OsRng;
+use rand::{rngs::OsRng, Rng};
 use std::collections::HashMap;
 
 const CONTEXT: &[u8] = b"example";
@@ -63,9 +63,10 @@ fn main() {
         println!("Round {}", round);
     
         // Commit-reveal phase
-        let commit_string = format!("poker_game{}", round);
-        let commit_input = commit_string.as_bytes();
-    
+        let mut rng = rand::thread_rng();
+        let commit_input_vec: Vec<u8> = (0..10).map(|_| rng.gen()).collect();
+        let commit_input: &[u8] = commit_input_vec.as_slice();
+        
         // Players draw their cards
         for player in players.values_mut() {
             player.draw_card(commit_input);
